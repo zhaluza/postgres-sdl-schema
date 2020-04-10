@@ -1,5 +1,6 @@
 const { makeExecutableSchema } = require('graphql-tools');
 // TODO: remind readers to import their database connection as db
+
 const db = require('../dbConnect');
 
 const typeDefs = `
@@ -43,36 +44,36 @@ const resolvers = {
     // 1. return "res.rows" for an iterable result
     // 2. return "res.rows[0]" for a single result
     users: () => {
-      const query = `SELECT * FROM users`;
       try {
+        const query = `SELECT * FROM users`;
         return db.query(query).then((res) => res.rows);
       } catch (err) {
         throw new Error(err);
       }
     },
     user: (parent, args) => {
-      const query = `SELECT * FROM users 
-      WHERE id = $1`;
-      const values = [args.id];
       try {
+        const query = `SELECT * FROM users 
+      WHERE id = $1`;
+        const values = [args.id];
         return db.query(query, values).then((res) => res.rows[0]);
       } catch (err) {
         throw new Error(err);
       }
     },
     posts: () => {
-      const query = `SELECT * FROM posts`;
       try {
+        const query = `SELECT * FROM posts`;
         return db.query(query);
       } catch (err) {
         throw new Error(err);
       }
     },
     post: (parent, args) => {
-      const query = `SELECT * FROM posts 
-      WHERE id = $1`;
-      const values = [args.id];
       try {
+        const query = `SELECT * FROM posts 
+      WHERE id = $1`;
+        const values = [args.id];
         return db.query(query, values);
       } catch (err) {
         throw new Error(err);
@@ -92,30 +93,58 @@ const resolvers = {
       }
     },
     updateUser: (parent, args) => {
-      const query = `UPDATE users 
+      try {
+        const query = `UPDATE users 
         SET username=$1 password=$2
         WHERE id=$3`;
-      const values = [args.username, args.password, args.id];
-      try {
+        const values = [args.username, args.password, args.id];
         return db.query(query, values);
       } catch (err) {
         throw new Error(err);
       }
     },
     deleteUser: (parent, args) => {
-      const query = `DELETE FROM users
-        WHERE id=$1`;
-      const values = [args.id];
       try {
+        const query = `DELETE FROM users
+        WHERE id=$1`;
+        const values = [args.id];
         return db.query(query, values);
       } catch (err) {
         throw new Error(err);
       }
     },
 
-    createPost: (parent, args) => {},
-    updatePost: () => {},
-    deletePost: () => {},
+    createPost: (parent, args) => {
+      try {
+        const query = `INSERT INTO posts(text, author)
+        VALUES($1, $2)`;
+        const values = [args.text, args.author];
+        return db.query(query, values).then((res) => res.rows[0]);
+      } catch (err) {
+        throw new Error(err);
+      }
+    },
+    updatePost: (parent, args) => {
+      try {
+        const query = `UPDATE users
+        SET text=$1 author=$2
+        WHERE ID=$3`;
+        const values = [args.text, args.author, args.id];
+        return db.query(query, values).then((res) => res.rows[0]);
+      } catch (err) {
+        throw new Error(err);
+      }
+    },
+    deletePost: (parent, args) => {
+      try {
+        const query = `DELETE FROM users
+        WHERE id=$1`;
+        const values = [args.id];
+        return db.query(query, values).then((res) => res.rows[0]);
+      } catch (err) {
+        throw new Error(err);
+      }
+    },
   },
 };
 
