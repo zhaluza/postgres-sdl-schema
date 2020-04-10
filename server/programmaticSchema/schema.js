@@ -103,6 +103,116 @@ const RootQuery = new GraphQLObjectType({
   },
 });
 
+const Mutation = new GraphQLObjectType({
+  name: 'Mutation',
+  fields: {
+    addUser: {
+      type: UserType,
+      args: {
+        username: { type: new GraphQLNonNull(GraphQLString) },
+        password: { type: new GraphQLNonNull(GraphQLString) },
+      },
+      resolve(parent, args) {
+        try {
+          const query = `INSERT INTO users(username, password)
+          VALUES($1, $2)`;
+          const values = [args.username, args.password];
+          return db.query(query, values).then((res) => res.rows[0]);
+        } catch (err) {
+          throw new Error(err);
+        }
+      },
+    },
+    updateUser: {
+      type: UserType,
+      args: {
+        username: { type: GraphQLString },
+        password: { type: GraphQLString },
+      },
+      resolve(parent, args) {
+        try {
+          const query = `UPDATE users
+        SET username=$1 password=$2
+        WHERE id=$3`;
+          const values = [args.username, args.password, args.id];
+          db.query(query, values).then((res) => res.rows[0]);
+        } catch (err) {
+          throw new Error(err);
+        }
+      },
+    },
+    deleteUser: {
+      type: UserType,
+      args: {
+        username: { type: GraphQLString },
+        password: { type: GraphQLString },
+      },
+      resolve(parent, args) {
+        try {
+          const query = `DELETE FROM users
+          WHERE id=$1`;
+          const values = [args.id];
+          return db.query(query, values).then((res) => res.rows[0]);
+        } catch (err) {
+          throw new Error(err);
+        }
+      },
+    },
+
+    addPost: {
+      type: PostType,
+      args: {
+        text: { type: new GraphQLNonNull(GraphQLString) },
+        author: { type: new GraphQLNonNull(GraphQLString) },
+      },
+      resolve(parent, args) {
+        try {
+          const query = `INSERT INTO posts(text, author)
+          VALUES($1, $2)`;
+          const values = [args.text, args.author];
+          return db.query(query, values).then((res) => res.rows[0]);
+        } catch (err) {
+          throw new Error(err);
+        }
+      },
+    },
+    updatePost: {
+      type: PostType,
+      args: {
+        text: { type: GraphQLString },
+        author: { type: GraphQLString },
+      },
+      resolve(parent, args) {
+        try {
+          const query = `UPDATE users
+          SET text=$1 author=$2
+          WHERE ID=$3`;
+          const values = [args.text, args.author, args.id];
+          return db.query(query, values).then((res) => res.rows[0]);
+        } catch (err) {
+          throw new Error(err);
+        }
+      },
+    },
+    deletePost: {
+      type: PostType,
+      args: {
+        id: { type: new GraphQLNonNull(GraphQLString) },
+      },
+      resolve(parent, args) {
+        try {
+          const query = `DELETE FROM users
+          WHERE id=$1`;
+          const values = [args.id];
+          return db.query(query, values).then((res) => res.rows[0]);
+        } catch (err) {
+          throw new Error(err);
+        }
+      },
+    },
+  },
+});
+
 module.exports = new GraphQLSchema({
   query: RootQuery,
   mutation: Mutation,
