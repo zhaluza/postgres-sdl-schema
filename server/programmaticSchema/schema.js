@@ -28,8 +28,8 @@ const PostType = new GraphQLObjectType({
       type: UserType,
       resolve(parent, args) {
         try {
-          const query = `SELECT * FROM posts
-        WHERE author=$1`;
+          const query = `SELECT * FROM users
+        WHERE id=$1`;
           const values = [parent.id];
           return db.query(query, values).then((res) => res.rows[0]);
         } catch (err) {
